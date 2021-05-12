@@ -27,6 +27,18 @@ public class Main {
     WRITE_FULL
   }
 
+  private static boolean compare(byte[] a, byte[] b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * @param args the command line arguments
    */
@@ -90,7 +102,7 @@ public class Main {
               try {
                 raf.seek(pos+off);
                 raf.read(buffer);
-                if (Arrays.compare(target, buffer) != 0) {
+                if (!compare(target, buffer)) {
                   System.out.println("Failed verification at " + (pos+off));
                   if (off == INITIAL_OFF) {
                     System.out.println("Final failure: " + (pos+off));
@@ -141,7 +153,7 @@ public class Main {
               raf.write(target);
               raf.seek(pos+off);
               raf.read(buffer);
-              if (Arrays.compare(target, buffer) != 0) {
+              if (!compare(target, buffer)) {
                 System.out.println("Failed verification at " + (pos+off));
                 if (off == INITIAL_OFF) {
                   System.out.println("Final failure: " + (pos+off));
@@ -209,7 +221,7 @@ public class Main {
               digest.update(salt);
               byte[] hash = digest.digest(longToBytes(pos));
               raf.read(buffer);
-              if (Arrays.compare(hash, buffer) != 0) {
+              if (!compare(hash, buffer)) {
                 System.out.println("Failed verification at " + pos);
                 System.out.println("(If right near the reported end, it may have just got cut off, and is actually fine.)");
                 raf.close();
